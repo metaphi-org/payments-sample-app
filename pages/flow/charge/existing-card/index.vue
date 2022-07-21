@@ -372,7 +372,9 @@ export default class CardFlowClass extends Vue {
           marketPlacePayload
         )
       } else {
+        console.log("hi im here"); 
         this.payment = await this.$paymentsApi.createPayment(payload)
+        alert(this.payment);  
       }
       this.showPaymentStatus = true
     } catch (error) {

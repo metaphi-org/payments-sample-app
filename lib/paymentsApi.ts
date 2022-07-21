@@ -10,6 +10,28 @@ interface MetaData {
   ipAddress: string
 }
 
+
+export interface MetaphiBankDetails {
+  idempotencyKey: string,
+   beneficiaryName: string,
+  accountNumber: string,
+  routingNumber: string,
+  billingDetails: { 
+    name: string,
+    city: string,
+    country: string,
+    line1: string,
+    district: string,
+    postalCode: string
+  }, 
+  bankAddress: {
+    country: string, 
+    city: string | undefined, 
+    iban: string | undefined, 
+    bankName: string | undefined
+  }
+}
+
 export interface BasePaymentPayload {
   idempotencyKey: string
   amount: {
