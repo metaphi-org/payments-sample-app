@@ -44,7 +44,7 @@ const instance = axios.create({
   },
 })
 export default class PaymentStatus extends Vue {
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String , default: '' })
   paymentId!: string
   metaphiBankDetails!: MetaphiBankDetails;
   paymentResponse = {
@@ -85,11 +85,26 @@ export default class PaymentStatus extends Vue {
 
 
         if(payment.status === 'confirmed'){
-                  alert(this.metaphiBankDetails); 
 
 
            //Call API on metaphi backend. 
-          //  metaphiResponse =  JSON.stringify((await instance.get('/v1/onramp/' + paymentId)).data) ;  
+           metaphiResponse =  JSON.stringify((await instance.post('/v1/onramp/' + paymentId, {
+        'idempotencyKey': '6ae62bf2-bd71-49ce-a599-165ffcc33680',
+        'beneficiaryName': 'John Smith',
+        'accountNumber': '123456789',
+        'routingNumber': '021000021',
+        'billingDetails': {
+            'name': 'John Smith',
+            'city': 'Boston',
+            'country': 'US',
+            'line1': '1 Main Street',
+            'district': 'MA',
+            'postalCode': '02201'
+        },
+        'bankAddress': {
+            'country': 'US'
+        }
+    }  )).data) ;  
         }
 
       }
@@ -108,7 +123,7 @@ export default class PaymentStatus extends Vue {
 
   mounted() {
     if (this.paymentId) {
-      alert(this.paymentId);
+      // alert(this.paymentId);
       this.pollForPaymentsDetail(this.paymentId)
     }
   }

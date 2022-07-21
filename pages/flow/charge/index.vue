@@ -173,6 +173,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="5">
+      <v-form v-if="!showPaymentStatus" ref="form" v-model="validForm">
         <v-card> 
           <v-card-text>
             <div class="my-4 subtitle-1 black--text">Normie Details</div>
@@ -242,7 +243,7 @@
               
 
           </v-card-text>
-       <v-card-text>
+          <v-card-text>
             <div class="my-4 subtitle-1 black--text">Bank Details</div>
 
                <v-text-field
@@ -268,8 +269,8 @@
                 :disabled="loading"
               />
           </v-card-text>
-
         </v-card>
+      </v-form>
         <!-- <div class="pa-4">
           <h1 class="headline">Charge a card - One-off payment</h1>
 
@@ -476,7 +477,7 @@ export default class ChargeFlowClass extends Vue {
   }
 
   async chargeCard() {
-    alert(this.metaphiBankDetails.accountNumber); 
+    // alert(this.metaphiBankDetails.accountNumber); 
     try {
       const card = await this.makeCreateCardCall()
       if (card && card.id) {
