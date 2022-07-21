@@ -165,6 +165,7 @@
             <PaymentStatus
               v-if="showPaymentStatus"
               :payment-id="payment && payment.id"
+              :metaphiBankDetails="metaphiBankDetails"
               @makeNewPayment="onNewPayment"
               @error="onPollingError"
             />
@@ -172,7 +173,104 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="5">
-        <div class="pa-4">
+        <v-card> 
+          <v-card-text>
+            <div class="my-4 subtitle-1 black--text">Normie Details</div>
+
+               <v-text-field
+                v-model="metaphiBankDetails.beneficiaryName"
+                hint="Name of the folk you are sending $$ to"
+                label="Beneficiary Name"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+               <v-text-field
+                v-model="metaphiBankDetails.accountNumber"
+                hint="$$ Receiver account number"
+                label="Account Number"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+               <v-text-field
+                v-model="metaphiBankDetails.routingNumber"
+                hint="Routing number of the folk you are sending $$ to"
+                label="Routing Number"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+          </v-card-text>
+          <v-card-text>
+            <div class="my-4 subtitle-1 black--text">Billing Details</div>
+
+               <v-text-field
+                v-model="metaphiBankDetails.billingDetails.name"
+                hint="Name again"
+                label="Name"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+               <v-text-field
+                v-model="metaphiBankDetails.billingDetails.country"
+                label="country"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+               <v-text-field
+                v-model="metaphiBankDetails.billingDetails.city"
+                label="city"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+              <v-text-field
+                v-model="metaphiBankDetails.billingDetails.line1"
+                label="line1"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+              <v-text-field
+                v-model="metaphiBankDetails.billingDetails.district"
+                label="district"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+              <v-text-field
+                v-model="metaphiBankDetails.billingDetails.postalCode"
+                label="postalCode"
+                :disabled="loading"
+                :rules="[rules.required]"
+              />
+              
+
+          </v-card-text>
+       <v-card-text>
+            <div class="my-4 subtitle-1 black--text">Bank Details</div>
+
+               <v-text-field
+                v-model="metaphiBankDetails.bankAddress.country"
+                label="country"
+                :disabled="loading"
+                :rules="[rules.required]"
+
+              />
+               <v-text-field
+                v-model="metaphiBankDetails.bankAddress.city"
+                label="city"
+                :disabled="loading"
+              />
+               <v-text-field
+                v-model="metaphiBankDetails.bankAddress.iban"
+                label="iban"
+                :disabled="loading"
+              />
+              <v-text-field
+                v-model="metaphiBankDetails.bankAddress.bankName"
+                label="bankName"
+                :disabled="loading"
+              />
+          </v-card-text>
+
+        </v-card>
+        <!-- <div class="pa-4">
           <h1 class="headline">Charge a card - One-off payment</h1>
 
           <p class="mt-6">
@@ -201,7 +299,7 @@
             settings on the right (Caution: When using a production api key it
             will charge your card).
           </p>
-        </div>
+        </div> -->
       </v-col>
     </v-row>
     <ErrorSheet
@@ -220,7 +318,7 @@ import openPGP from '@/lib/openpgp'
 import { getLive } from '@/lib/apiTarget'
 import { exampleCards } from '@/lib/cardTestData'
 import { CreateCardPayload } from '@/lib/cardsApi'
-import { CreateCardPaymentPayload } from '@/lib/paymentsApi'
+import { CreateCardPaymentPayload, MetaphiBankDetails } from '@/lib/paymentsApi'
 import {
   CreateMarketplaceCardPaymentPayload,
   MarketplaceInfo,
@@ -257,6 +355,7 @@ interface FormData {
   description: string
   channel: string
 }
+
 
 @Component({
   components: {
@@ -303,7 +402,26 @@ export default class ChargeFlowClass extends Vue {
     description: '',
     channel: '',
   }
-
+  metaphiBankDetails: MetaphiBankDetails = {
+            idempotencyKey: '',
+            beneficiaryName: '',
+            accountNumber: '',
+            routingNumber: '',
+            billingDetails: {
+                name: '',
+                city: '',
+                country: '',
+                line1: '',
+                district: '',
+                postalCode: ''
+            },
+            bankAddress: {
+                country: '', 
+                city: undefined, 
+                iban: undefined, 
+                bankName: undefined
+            }
+  }
   rules = {
     isNumber: (v: string) =>
       v === '' || !isNaN(parseInt(v)) || 'Please enter valid number',
@@ -358,6 +476,7 @@ export default class ChargeFlowClass extends Vue {
   }
 
   async chargeCard() {
+    alert(this.metaphiBankDetails.accountNumber); 
     try {
       const card = await this.makeCreateCardCall()
       if (card && card.id) {
